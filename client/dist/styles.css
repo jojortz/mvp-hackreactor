@@ -1,0 +1,13 @@
+#app {
+  margin: 30px 40px;
+  font-family: Roboto;
+  font-weight: normal;
+  padding: 0;
+  margin: 10px, 0;
+  width: 60vw;
+  min-width: 450px;
+  max-width: 1000px;
+}
+h1, h4 {
+  font-weight: 300;
+}
