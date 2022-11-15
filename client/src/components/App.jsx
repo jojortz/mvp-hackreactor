@@ -11,12 +11,15 @@ const host = 'http://localhost:3000';
 const App = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState({
+    id: '3',
     firstName: 'J',
     lastName: 'jl',
     email: 'j@j',
+    regionName: '',
+    regionId: '',
     address: '',
     minWaveHt: 0,
-    maxWaveHt: 5
+    maxWaveHt: 5,
   });
   const [location, setLocation] = useState({
     continent: {
@@ -59,9 +62,13 @@ const App = () => {
 
   const handleSettings = (newLocation, newUser) => {
     console.log('New Location', newLocation);
-    console.log('New User', newUser);
     setLocation(newLocation);
-    setUser(newUser);
+    axios.post(`${process.env.SERVER_HOST}/db/new_user`, newUser)
+      .then((res) => {
+        console.log('Created new user', res.data);
+        setUser(newUser);
+      })
+      .catch(e => console.error(e));
   };
 
 

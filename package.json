@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "server-dev": "npx nodemon --watch server server/index.js",
+    "server-dev": "npx nodemon --watch server --watch database server/index.js",
     "react-dev": "webpack --mode development --watch"
   },
   "repository": {
@@ -29,6 +29,7 @@
     "babel-plugin-macros": "^3.1.0",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "pg": "^8.8.0",
     "react": "^18.2.0",
     "react-google-autocomplete": "^2.7.0",
     "react-modal": "^3.16.1",

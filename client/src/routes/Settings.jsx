@@ -59,9 +59,12 @@ const Settings = ({ user, currentLocation, handleSettings }) => {
   const handleSubmit = e => {
     e.preventDefault();
     const thisUser = {
+      id: user.id,
       firstName,
       lastName,
       email,
+      regionName: location.region.name,
+      regionId: location.region.id,
       address,
       minWaveHt,
       maxWaveHt
