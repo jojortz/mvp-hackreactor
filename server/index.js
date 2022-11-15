@@ -1,7 +1,7 @@
 const express = require("express");
 const path = require("path");
 require("dotenv").config();
-const { getSpots, getSubregions } = require("./controllers/api_controller");
+const { getSubregions, getSubregionsAndSpots } = require("./controllers/api_controller");
 
 let port = process.env.PORT || 3000;
 
@@ -11,8 +11,8 @@ app.use(express.static(path.join(__dirname, "../client/dist")));
 app.use(express.json());
 
 
+app.get('/api/subregions_spots', getSubregionsAndSpots);
 app.get('/api/subregions', getSubregions);
-app.get('/api/spots', getSpots);
 
 // Handles any requests that don't match the ones above
 app.get('*', (req,res) =>{

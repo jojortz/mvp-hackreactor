@@ -47,7 +47,8 @@ module.exports = {
     // within client-side files at build-time:
     new webpack.DefinePlugin({
       "process.env": {
-        TOKEN: JSON.stringify(process.env.TOKEN),
+        REACT_APP_GOOGLE: JSON.stringify(process.env.REACT_APP_GOOGLE),
+        SERVER_HOST: JSON.stringify(process.env.SERVER_HOST)
       },
     }),
   ],

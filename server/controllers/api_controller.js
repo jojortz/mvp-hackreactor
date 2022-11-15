@@ -2,7 +2,7 @@ const axios = require('axios');
 
 const surfline_taxonomy_url = 'http://services.surfline.com/taxonomy';
 
-const getSubregions = (req, res) => {
+const getSubregionsAndSpots = (req, res) => {
   console.log('Getting subregions', req.query);
   const config = {
     params: {
@@ -17,7 +17,7 @@ const getSubregions = (req, res) => {
       result.data.contains.forEach((subregion) => {
         if (subregion.hasSpots) {
           subregions.push({
-            name: subregion.geonames.name,
+            name: subregion.name,
             id: subregion._id
           })
         }
@@ -50,6 +50,44 @@ const getSubregions = (req, res) => {
     })
     .catch(e => console.error(e.stack));
 };
+
+const getSubregions = (req, res) => {
+  console.log('Getting subregions', req.query);
+  const config = {
+    params: {
+      type: 'taxonomy',
+      id: req.query.id,
+      maxDepth: 0
+    }
+  };
+  let subregions = [];
+  axios.get(surfline_taxonomy_url, config)
+    .then((result) => {
+      result.data.contains.forEach((subregion) => {
+        if (subregion.hasSpots) {
+          subregions.push({
+            name: subregion.name,
+            id: subregion._id
+          })
+        }
+      });
+      subregions = subregions.sort((a, b) => {
+        const nameA = a.name.toUpperCase();
+        const nameB = b.name.toUpperCase();
+        if (nameA < nameB) {
+          return -1;
+        }
+        if (nameA > nameB) {
+          return 1;
+        }
+        return 0;
+      });
+      res.status(200);
+      res.send(subregions)
+    })
+    .catch(e => console.error(e));
+};
+
 const getSpots = (req, res) => {
   console.log('Getting spots', req.query.subregions);
   let promises = [];
@@ -73,6 +111,6 @@ const getSpots = (req, res) => {
 };
 
 module.exports = {
-  getSpots,
-  getSubregions
+  getSubregions,
+  getSubregionsAndSpots
 };

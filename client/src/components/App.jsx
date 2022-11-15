@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import Home from "../routes/Home.jsx";
 import Settings from "../routes/Settings.jsx";
 import Sessions from "../routes/Sessions.jsx";
@@ -9,8 +9,39 @@ import ErrorPage from "../error-page.jsx";
 const host = 'http://localhost:3000';
 
 const App = () => {
-  const [location, setLocation] = useState({});
+  const navigate = useNavigate();
+  const [user, setUser] = useState({
+    firstName: 'J',
+    lastName: 'jl',
+    email: 'j@j',
+    address: '',
+    minWaveHt: 0,
+    maxWaveHt: 5
+  });
+  const [location, setLocation] = useState({
+    continent: {
+      name: '',
+      id: '58f7ed51dadb30820bb38791'
+    },
+    country: {
+      name: '',
+      id: '58f7ed51dadb30820bb3879c'
+    },
+    state: {
+      name: '',
+      id: '58f7ed51dadb30820bb387a6'
+    },
+    region: {
+      name: '',
+      id: '58f7ed5bdadb30820bb393cd'
+    }
+  });
   const [subregions, setSubregions] = useState([]);
+
+  const handleSettingsClick = e => {
+    e.preventDefault();
+    navigate('/settings');
+  };
 
   const getSubregions = () => {
     const config = {
@@ -18,13 +49,20 @@ const App = () => {
         id: location.region.id
       }
     };
-    axios.get(`${host}/api/subregions`, config)
-    .then((res) => {
-      console.log('Got the subregions', res.data);
-      setSubregions(res.data);
-    })
-    .catch(e => console.error(e));
-  }
+    axios.get(`${process.env.SERVER_HOST}/api/subregions_spots`, config)
+      .then((res) => {
+        console.log('Got the subregions', res.data);
+        setSubregions(res.data);
+      })
+      .catch(e => console.error(e));
+  };
+
+  const handleSettings = (newLocation, newUser) => {
+    console.log('New Location', newLocation);
+    console.log('New User', newUser);
+    setLocation(newLocation);
+    setUser(newUser);
+  };
 
 
   useEffect(() => {
@@ -35,12 +73,13 @@ const App = () => {
 
   return (
     <>
-      <h1>Waave</h1>
+      <h1>WAAVE</h1>
+      <button onClick={handleSettingsClick}>Update Settings</button>
       <Routes>
-        <Route path="/" element={<Home />} errorElement={<ErrorPage/>}/>
-        <Route path="settings" element={<Settings setLocation={setLocation}/>} />
-        <Route path="sessions" element={<Sessions subregions={subregions}/>} />
-        <Route path="*" element={<ErrorPage/>}/>
+        <Route path="/" element={<Home />} errorElement={<ErrorPage />} />
+        <Route path="settings" element={<Settings handleSettings={handleSettings} user={user} currentLocation={location} />} />
+        <Route path="sessions" element={<Sessions subregions={subregions} />} />
+        <Route path="*" element={<ErrorPage />} />
       </Routes>
     </>
   )
