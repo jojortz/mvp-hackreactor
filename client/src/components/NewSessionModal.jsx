@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import Modal from 'react-modal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
-import { TextField, Button, ToggleButtonGroup, ToggleButton } from '@mui/material';
+import { Select, InputLabel, MenuItem, TextField, Button, ToggleButtonGroup, ToggleButton } from '@mui/material';
 
-const max_day_range = 16;
+const max_day_range = 17;
 
 const SettingsForm = styled.form`
 display: flex;
@@ -14,6 +13,10 @@ flex-direction: column;
 justify-content: space-between;
 height: 75%;
 `;
+
+const LocationInput = styled.div`
+  width: 100%;
+`
 
 const modalStyle = {
   overlay: {
@@ -26,7 +29,7 @@ const modalStyle = {
     boxShadow: '0 6px 35px rgba(0,0,0,0.65)',
     borderRadius: '25px',
     borderColor: 'rgba(255, 255, 255,0.8)',
-    width: '200px',
+    width: '300px',
     aspectRatio: '1 / 1.62',
     position: 'absolute',
     left: '50%',
@@ -47,12 +50,16 @@ const formatDate = (date) => {
   return date.toISOString().split('T')[0];
 }
 
-const NewSessionModal = ({ openModal, setOpenModal, handleNewSession }) => {
+const NewSessionModal = ({ openModal, setOpenModal, handleNewSession, regions }) => {
   const [day, setDay] = useState('');
   const [minDay, setMinDay] = useState('');
   const [maxDay, setMaxDay] = useState('');
   const [time, setTime] = useState('am');
   const [name, setName] = useState('New Session');
+  const [region, setRegion] = useState({
+    name: '',
+    id: ''
+  });
 
   useEffect(() => {
     if (openModal) {
@@ -72,21 +79,30 @@ const NewSessionModal = ({ openModal, setOpenModal, handleNewSession }) => {
     e.preventDefault();
     setDay(e.target.value);
   };
+  const handleRegionChange = newRegion => {
+    regions.every((thisRegion) => {
+      if (thisRegion.name === newRegion) {
+        setRegion(thisRegion);
+        return false;
+      }
+      return true;
+    })
+  };
 
   const handleTimeChange = e => {
     e.preventDefault();
     setTime(e.target.value);
-  }
+  };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = e => {
     e.preventDefault();
-    setOpenModal(!openModal);
-    const newSession = {
+    handleNewSession({
       name,
       day,
-      time
-    }
-    console.log('Adding session', newSession)
+      time,
+      regionId: region.id,
+      regionName: region.name
+    });
   }
 
   return (
@@ -120,6 +136,26 @@ const NewSessionModal = ({ openModal, setOpenModal, handleNewSession }) => {
           onChange={handleDayChange}
           InputProps={{ inputProps: { min: minDay, max: maxDay } }}
           required />
+        <LocationInput>
+
+          <InputLabel id="region-label">Region</InputLabel>
+          <Select
+            sx={{ width: '100%' }}
+            labelId="region-label"
+            id="region-select"
+            value={region.name}
+            label="Region"
+            onChange={e => {
+              e.preventDefault();
+              handleRegionChange(e.target.value);
+            }}
+            required
+          >
+            {regions.map((region, i) => (
+              <MenuItem key={region.name + i} value={region.name}>{region.name}</MenuItem>
+            ))}
+          </Select>
+        </LocationInput>
         <ToggleButtonGroup
           color='primary'
           value={time}

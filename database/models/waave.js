@@ -13,8 +13,6 @@ const userQuery = `CREATE TABLE IF NOT EXISTS users (
   first_name TEXT,
   last_name TEXT,
   email TEXT,
-  region_name TEXT,
-  region_id TEXT,
   address TEXT,
   max_wave_ht INT,
   min_wave_ht INT
@@ -22,16 +20,24 @@ const userQuery = `CREATE TABLE IF NOT EXISTS users (
 
 const sessionsQuery = `CREATE TABLE IF NOT EXISTS sessions (
   id SERIAL PRIMARY KEY,
+  name TEXT,
+  time TEXT,
+  date TEXT,
+  region_name TEXT,
+  region_id TEXT,
   user_id INTEGER,
-  url TEXT,
   FOREIGN KEY(user_id) REFERENCES users(id)
 );`
 
 pool.query(userQuery)
-.then((result) => {
-  console.log('SUCCESS: Created user table');
-})
-.catch(e => console.error(e.stack));
+  .then((result) => {
+    console.log('SUCCESS: Created user table');
+    return pool.query(sessionsQuery);
+  })
+  .then((result) => {
+    console.log('SUCCESS: Created sessions table');
+  })
+  .catch(e => console.error(e.stack));
 
 module.exports = {
   pool

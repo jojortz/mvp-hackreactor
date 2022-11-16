@@ -1,35 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import SessionCard from './SessionCard.jsx';
-import NewSessionModal from './NewSessionModal.jsx';
 
 const SessionCardContainer = styled.div`
-border: 1pt solid red;
 width: 100%;
 height: 90vh;
 display: flex;
+flex-flow: row wrap;
 justify-content: flex-start;
-flex-wrap: wrap;
+align-items: flex-start;
+gap: 3%;
+overflow: auto;
 `;
 
-const SessionCardList = ({ sessions, handleNewSession }) => {
-  const [openModal, setOpenModal] = useState(false);
-  const handleAddCardClick = (e) => {
-    e.preventDefault();
-    setOpenModal(!openModal);
-  };
+const SessionCardList = ({ sessions, handleAddCardClick, handleSpotsClick }) => {
   return (
     <SessionCardContainer>
       {sessions !== undefined &&
         sessions.map((session, i) => (
-          <SessionCard key={session.name + i} session={session} handleNewSession={handleNewSession} handleAddCardClick={handleAddCardClick}/>
+          <SessionCard key={session.name + i} session={session} handleAddCardClick={handleAddCardClick} handleSpotsClick={handleSpotsClick}/>
         ))
       }
-      <NewSessionModal
-        handleNewSession={handleNewSession}
-        openModal={openModal}
-        setOpenModal={setOpenModal}
-      />
     </SessionCardContainer >
   )
 };

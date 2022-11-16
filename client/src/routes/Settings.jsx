@@ -39,21 +39,9 @@ const Settings = ({ user, currentLocation, handleSettings }) => {
   const [address, setAddress] = useState(user.address);
   const [minWaveHt, setMinWaveHt] = useState(user.minWaveHt);
   const [maxWaveHt, setMaxWaveHt] = useState(user.maxWaveHt);
-  const [regions, setRegions] = useState([]);
   const [location, setLocation] = useState(currentLocation);
 
-  const getSubregions = (id) => {
-    const config = {
-      params: {
-        id
-      }
-    };
-    axios.get(`${process.env.SERVER_HOST}/api/subregions`, config)
-      .then((res) => {
-        setRegions(res.data);
-      })
-      .catch(e => console.error(e));
-  };
+
 
 
   const handleSubmit = e => {
@@ -84,12 +72,6 @@ const Settings = ({ user, currentLocation, handleSettings }) => {
     });
     setAddress(place.formatted_address);
   };
-
-  useEffect(() => {
-    if (location.state.name !== '') {
-      getSubregions(location.state.id);
-    }
-  }, [location.state]);
 
   const { ref: materialRef } = usePlacesWidget({
     apiKey: process.env.REACT_APP_GOOGLE,
@@ -270,7 +252,7 @@ const Settings = ({ user, currentLocation, handleSettings }) => {
               <MenuItem value={'California'}>California</MenuItem>
             </Select>
           </LocationInput>
-          <LocationInput>
+          {/* <LocationInput>
             <InputLabel id="region-label">Region</InputLabel>
             <Select
               sx={{ width: '100%' }}
@@ -288,7 +270,7 @@ const Settings = ({ user, currentLocation, handleSettings }) => {
                 <MenuItem key={region.name + i}value={region.name}>{region.name}</MenuItem>
               ))}
             </Select>
-          </LocationInput>
+          </LocationInput> */}
         </LocationForm>
         <Button variant='outlined' type='submit'>Update Settings</Button>
       </SettingsForm>

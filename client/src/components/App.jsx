@@ -1,20 +1,40 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Routes, Route, Link, useNavigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link, useNavigate, Outlet } from "react-router-dom";
 import Home from "../routes/Home.jsx";
 import Settings from "../routes/Settings.jsx";
 import Sessions from "../routes/Sessions.jsx";
 import ErrorPage from "../error-page.jsx";
+import { faWater } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import styled from 'styled-components';
 
 const host = 'http://localhost:3000';
+
+const Header = styled.header`
+box-sixing: border-box;
+background: lightblue;
+color: white;
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin: 0;
+padding: 0 20px;
+position: sticky;
+top: 0;
+`
+const AppContainer = styled.div`
+width: 80vw;
+margin: 0 auto;
+`
 
 const App = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState({
-    id: '3',
-    firstName: 'J',
-    lastName: 'jl',
-    email: 'j@j',
+    id: '',
+    firstName: 'Jojo',
+    lastName: 'Ortiz',
+    email: 'jojo@ortiz.org',
     regionName: '',
     regionId: '',
     address: '',
@@ -40,54 +60,75 @@ const App = () => {
     }
   });
   const [subregions, setSubregions] = useState([]);
+  const [regions, setRegions] = useState([]);
 
-  const handleSettingsClick = e => {
-    e.preventDefault();
-    navigate('/settings');
-  };
-
-  const getSubregions = () => {
+  // const getSubregions = () => {
+  //   const config = {
+  //     params: {
+  //       id: location.region.id
+  //     }
+  //   };
+  //   axios.get(`${process.env.SERVER_HOST}/api/subregions_spots`, config)
+  //     .then((res) => {
+  //       console.log('Got the subregions', res.data);
+  //       setSubregions(res.data);
+  //     })
+  //     .catch(e => console.error(e));
+  // };
+  const getRegions = (id) => {
     const config = {
       params: {
-        id: location.region.id
+        id
       }
     };
-    axios.get(`${process.env.SERVER_HOST}/api/subregions_spots`, config)
+    axios.get(`${process.env.SERVER_HOST}/api/subregions`, config)
       .then((res) => {
-        console.log('Got the subregions', res.data);
-        setSubregions(res.data);
+        setRegions(res.data);
       })
       .catch(e => console.error(e));
   };
+  useEffect(() => {
+    if (location.state.name !== '') {
+      getRegions(location.state.id);
+    }
+  }, [location.state]);
 
   const handleSettings = (newLocation, newUser) => {
-    console.log('New Location', newLocation);
     setLocation(newLocation);
     axios.post(`${process.env.SERVER_HOST}/db/new_user`, newUser)
       .then((res) => {
-        console.log('Created new user', res.data);
-        setUser(newUser);
+        setUser(res.data);
       })
       .catch(e => console.error(e));
   };
 
 
-  useEffect(() => {
-    if (Object.keys(location).length > 0) {
-      getSubregions();
-    }
-  }, [location]);
+  // useEffect(() => {
+  //   if (Object.keys(location).length > 0) {
+  //     getSubregions();
+  //   }
+  // }, [location]);
 
   return (
     <>
-      <h1>WAAVE</h1>
-      <button onClick={handleSettingsClick}>Update Settings</button>
+    <Header>
+      <h1><FontAwesomeIcon style={{marginRight:'15px'}} icon={ faWater } />WAAVE</h1>
+      <nav>
+        <Link to="/" style={{ textDecoration: 'none' }}>Home</Link> |{' '}
+        <Link to="/settings" style={{ textDecoration: 'none' }}>Settings</Link> |{' '}
+        <Link to="/sessions" style={{ textDecoration: 'none' }}>Sessions</Link>
+      </nav>
+    </Header>
+    <AppContainer>
       <Routes>
-        <Route path="/" element={<Home />} errorElement={<ErrorPage />} />
+        <Route path="/" element={<Home />}/>
         <Route path="settings" element={<Settings handleSettings={handleSettings} user={user} currentLocation={location} />} />
-        <Route path="sessions" element={<Sessions subregions={subregions} />} />
+        <Route path="sessions/*" element={<Sessions regions={regions} user={user}/>} />
         <Route path="*" element={<ErrorPage />} />
       </Routes>
+      <Outlet />
+    </AppContainer>
+
     </>
   )
 };

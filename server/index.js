@@ -2,8 +2,8 @@ const express = require("express");
 const path = require("path");
 const db = require('../database/models/waave');
 require("dotenv").config();
-const { getSubregions, getSubregionsAndSpots } = require("./controllers/api_controller");
-const { addUser, addSession } = require("../database/controllers/waave_controller");
+const { getSubregions, getSubregionsAndSpots, getSpots } = require("./controllers/api_controller");
+const { addUser, addSession, getSessions } = require("../database/controllers/waave_controller");
 
 let port = process.env.PORT || 3000;
 
@@ -15,8 +15,10 @@ app.use(express.json());
 
 app.get('/api/subregions_spots', getSubregionsAndSpots);
 app.get('/api/subregions', getSubregions);
+app.get('/api/spots', getSpots);
 app.post('/db/new_user', addUser);
 app.post('/db/new_session', addSession);
+app.get('/db/sessions', getSessions);
 
 // Handles any requests that don't match the ones above
 app.get('*', (req,res) =>{
