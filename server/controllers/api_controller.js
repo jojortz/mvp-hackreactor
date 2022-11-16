@@ -41,7 +41,7 @@ const getSubregionsAndSpots = (req, res) => {
         subregion.data.contains.forEach((spot) => {
           subregions[i].spots.push({
             name: spot.name,
-            id: spot._id
+            id: spot.spot
           })
         })
       });
