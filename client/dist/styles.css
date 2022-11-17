@@ -7,16 +7,47 @@ body {
   font-weight: normal;
   padding: 0;
   width: 100%;
-  min-width: 450px;
-  max-width: 1200px;
+  min-width: 600px;
   margin: 0;
 }
-h1, h4 {
+h1, h2 {
+  margin: 15px 0;
   font-weight: 300;
 }
-h2, h3 {
+h3 {
   font-weight: 400;
+  margin: 5px 0;
+}
+h4 {
+  font-weight: 300;
+  margin: 5px 0;
+}
+h5 {
+  font-weight: 5px;
+  font-size: 12pt;
+  padding: 0;
+  margin: 5px 0;
+}
+p {
+  font-size: 11pt;
+  padding: 0;
+  margin: 10px 0;
 }
 button:hover{
   cursor: pointer;
+}
+
+a {
+  color: white;
+}
+
+a:hover {
+  color:#0096c7;
+}
+
+svg {
+  color: #00b4d8;
+}
+.custom-link:hover {
+  color: #90e0ef;
 }

@@ -139,7 +139,7 @@ const getSpots = (req, res) => {
             id: subregion._id
           })
       });
-      console.log('Getting spots, subregions', subregions);
+    // console.log('Getting spots, subregions', subregions);
       let promises = [];
       subregions.forEach((subregion) => {
         let config = {
@@ -167,7 +167,7 @@ const getSpots = (req, res) => {
           }
         })
       })
-      console.log('SPOOOTTTSSS', spots);
+     // console.log('SPOOOTTTSSS', spots);
       let promises = [];
       spots.forEach((thisSpot) => {
         const config = {
@@ -181,14 +181,14 @@ const getSpots = (req, res) => {
       return Promise.all(promises);
     })
     .then((results) => {
-     console.log('Spot conditions', results[0].data.data.conditions);
+   //  console.log('Spot conditions', results[0].data.data.conditions);
       results.forEach((result, i) => {
         spots[i].forecast = {
           observation: result.data.data.conditions[days - 1].observation,
           conditions: result.data.data.conditions[days - 1][req.query.time]
         };
       });
-      console.log('final spots', spots);
+//console.log('final spots', spots);
       res.status(200);
       res.send(spots);
     })

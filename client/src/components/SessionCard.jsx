@@ -18,8 +18,8 @@ const Card = styled.div`
 border: 1pt solid #666;
 border-radius: 20px;
 box-sizing: border-box;
-width: 200px;
-aspect-ratio: 1 / 1.62;
+width: 225px;
+aspect-ratio: 1 / 1.5;
 padding: 20px;
 `
 

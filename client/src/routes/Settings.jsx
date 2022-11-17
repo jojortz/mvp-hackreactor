@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import styled from 'styled-components';
-import { TextField, Select, MenuItem, InputLabel, Button } from '@mui/material';
+import { TextField, Select, MenuItem, InputLabel, Button, Slider } from '@mui/material';
 import Autocomplete, { usePlacesWidget } from "react-google-autocomplete";
 import axios from 'axios';
 
@@ -9,6 +9,8 @@ const SettingsForm = styled.form`
 display: flex;
 flex-direction: column;
 gap: 5pt;
+max-width: 1000px;
+padding-bottom: 20px;
 `;
 
 const UserForm = styled.div`
@@ -24,11 +26,22 @@ padding-bottom: 10px;
 `;
 
 const LocationInput = styled.div`
-  width: 24%;
+  width: 32%;
 `
 
 const maximum_wave_ht = 20;
 const minimum_wave_ht = 0;
+
+const marks = [
+  {
+    value: minimum_wave_ht,
+    label: `${minimum_wave_ht}ft`,
+  },
+  {
+    value: maximum_wave_ht,
+    label: `${maximum_wave_ht}ft`,
+  }
+];
 
 const Settings = ({ user, currentLocation, handleSettings }) => {
   const navigate = useNavigate();
@@ -37,11 +50,9 @@ const Settings = ({ user, currentLocation, handleSettings }) => {
   const [email, setEmail] = useState(user.email);
   const [country, setCountry] = useState("us");
   const [address, setAddress] = useState(user.address);
-  const [minWaveHt, setMinWaveHt] = useState(user.minWaveHt);
-  const [maxWaveHt, setMaxWaveHt] = useState(user.maxWaveHt);
   const [location, setLocation] = useState(currentLocation);
-
-
+  const [tempAddress, setTempAddress] = useState(user.address);
+  const [waveHts, setWaveHts] = useState([user.minWaveHt, user.maxWaveHt]);
 
 
   const handleSubmit = e => {
@@ -54,8 +65,8 @@ const Settings = ({ user, currentLocation, handleSettings }) => {
       regionName: location.region.name,
       regionId: location.region.id,
       address,
-      minWaveHt,
-      maxWaveHt
+      minWaveHt: waveHts[0],
+      maxWaveHt: waveHts[1]
     }
     handleSettings(location, thisUser);
     navigate('/sessions');
@@ -72,6 +83,10 @@ const Settings = ({ user, currentLocation, handleSettings }) => {
     });
     setAddress(place.formatted_address);
   };
+  const handleTempAddressChange = (e) => {
+    e.preventDefault();
+    setAddress(e.target.value);
+  }
 
   const { ref: materialRef } = usePlacesWidget({
     apiKey: process.env.REACT_APP_GOOGLE,
@@ -83,23 +98,6 @@ const Settings = ({ user, currentLocation, handleSettings }) => {
     },
   });
 
-  const handleMinWaveChange = e => {
-    e.preventDefault();
-    const newWaveHeight = Number(e.target.value);
-    setMinWaveHt(newWaveHeight);
-    if (maxWaveHt === newWaveHeight) {
-      setMaxWaveHt(newWaveHeight + 1);
-    }
-  };
-  const handleMaxWaveChange = e => {
-    e.preventDefault();
-    const newWaveHeight = Number(e.target.value);
-    setMaxWaveHt(newWaveHeight);
-    if (minWaveHt === newWaveHeight) {
-      setMinWaveHt(newWaveHeight - 1);
-    }
-  };
-
   const handleContinentChange = newContinent => {
     setLocation(location => ({
       ...location,
@@ -109,6 +107,24 @@ const Settings = ({ user, currentLocation, handleSettings }) => {
       }
     }));
   };
+  const handleWaveChange = (e, newValue, activeThumb) => {
+    if (!Array.isArray(newValue)) {
+      return;
+    }
+    const minDistance = 1;
+
+    if (newValue[1] - newValue[0] < minDistance) {
+      if (activeThumb === 0) {
+        const clamped = Math.min(newValue[0], 100 - minDistance);
+        setWaveHts([clamped, clamped + minDistance]);
+      } else {
+        const clamped = Math.max(newValue[1], minDistance);
+        setWaveHts([clamped - minDistance, clamped]);
+      }
+    } else {
+      setWaveHts(newValue);
+    }
+  }
 
   const handleCountryChange = newCountry => {
     setLocation(location => ({
@@ -140,6 +156,11 @@ const Settings = ({ user, currentLocation, handleSettings }) => {
       }
     })
   };
+
+  function valuetext(value) {
+    return `${value}ft`;
+  }
+
   return (
     <>
       <h2>Settings</h2>
@@ -164,35 +185,27 @@ const Settings = ({ user, currentLocation, handleSettings }) => {
             required
             label='Address'
             fullWidth
+            value={address}
             color="secondary"
             variant="outlined"
             inputRef={materialRef}
+            onChange={handleTempAddressChange}
           />
         </div>
-        <h4>Wave Height Preference [feet]</h4>
+        <h4>Wave Height Preference</h4>
         <UserForm>
-          <TextField
-            sx={{ width: '70px' }}
-            label='Min'
-            type='number'
-            value={minWaveHt}
-            InputProps={{
-              inputProps: {
-                max: maximum_wave_ht - 1, min: minimum_wave_ht
-              }
-            }}
-            onChange={handleMinWaveChange} />
-          <TextField
-            sx={{ width: '70px' }}
-            label='Max'
-            type='number'
-            value={maxWaveHt}
-            InputProps={{
-              inputProps: {
-                max: maximum_wave_ht, min: minimum_wave_ht + 1
-              }
-            }}
-            onChange={handleMaxWaveChange} />
+          <Slider
+          style={{marginTop: '30px'}}
+            getAriaLabel={() => 'Wave Height'}
+            value={waveHts}
+            onChange={handleWaveChange}
+            valueLabelDisplay="on"
+            getAriaValueText={valuetext}
+            marks={marks}
+            min={minimum_wave_ht}
+            max={maximum_wave_ht}
+            disableSwap
+          />
         </UserForm>
         <h3>Surf Region</h3>
         <LocationForm>
@@ -212,8 +225,6 @@ const Settings = ({ user, currentLocation, handleSettings }) => {
             >
               <MenuItem disabled value={''}>Select a continent.</MenuItem>
               <MenuItem value={'North America'}>North America</MenuItem>
-              <MenuItem value={'South America'}>South America</MenuItem>
-              <MenuItem value={'Australia'}>Australia</MenuItem>
             </Select>
           </LocationInput>
           <LocationInput>
@@ -252,25 +263,6 @@ const Settings = ({ user, currentLocation, handleSettings }) => {
               <MenuItem value={'California'}>California</MenuItem>
             </Select>
           </LocationInput>
-          {/* <LocationInput>
-            <InputLabel id="region-label">Region</InputLabel>
-            <Select
-              sx={{ width: '100%' }}
-              labelId="region-label"
-              id="region-select"
-              value={location.region.name}
-              label="Region"
-              onChange={e => {
-                e.preventDefault();
-                handleRegionChange(e.target.value);
-              }}
-              required
-            >
-              {regions.map((region, i) => (
-                <MenuItem key={region.name + i}value={region.name}>{region.name}</MenuItem>
-              ))}
-            </Select>
-          </LocationInput> */}
         </LocationForm>
         <Button variant='outlined' type='submit'>Update Settings</Button>
       </SettingsForm>

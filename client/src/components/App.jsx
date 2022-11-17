@@ -8,12 +8,12 @@ import ErrorPage from "../error-page.jsx";
 import { faWater } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from 'styled-components';
-
-const host = 'http://localhost:3000';
+import { ThemeProvider } from '@mui/material/styles';
+import { theme } from '../MuiTheme';
 
 const Header = styled.header`
 box-sixing: border-box;
-background: lightblue;
+background: #48cae4;
 color: white;
 display: flex;
 justify-content: space-between;
@@ -25,6 +25,9 @@ top: 0;
 `
 const AppContainer = styled.div`
 width: 80vw;
+box-sizing: border-box;
+max-width: 1200px;
+min-width: 600px;
 margin: 0 auto;
 `
 
@@ -32,9 +35,9 @@ const App = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState({
     id: '',
-    firstName: 'Jojo',
-    lastName: 'Ortiz',
-    email: 'jojo@ortiz.org',
+    firstName: '',
+    lastName: '',
+    email: '',
     regionName: '',
     regionId: '',
     address: '',
@@ -62,19 +65,6 @@ const App = () => {
   const [subregions, setSubregions] = useState([]);
   const [regions, setRegions] = useState([]);
 
-  // const getSubregions = () => {
-  //   const config = {
-  //     params: {
-  //       id: location.region.id
-  //     }
-  //   };
-  //   axios.get(`${process.env.SERVER_HOST}/api/subregions_spots`, config)
-  //     .then((res) => {
-  //       console.log('Got the subregions', res.data);
-  //       setSubregions(res.data);
-  //     })
-  //     .catch(e => console.error(e));
-  // };
   const getRegions = (id) => {
     const config = {
       params: {
@@ -102,32 +92,28 @@ const App = () => {
       .catch(e => console.error(e));
   };
 
-
-  // useEffect(() => {
-  //   if (Object.keys(location).length > 0) {
-  //     getSubregions();
-  //   }
-  // }, [location]);
-
   return (
     <>
-    <Header>
-      <h1><FontAwesomeIcon style={{marginRight:'15px'}} icon={ faWater } />WAAVE</h1>
-      <nav>
-        <Link to="/" style={{ textDecoration: 'none' }}>Home</Link> |{' '}
-        <Link to="/settings" style={{ textDecoration: 'none' }}>Settings</Link> |{' '}
-        <Link to="/sessions" style={{ textDecoration: 'none' }}>Sessions</Link>
-      </nav>
-    </Header>
-    <AppContainer>
-      <Routes>
-        <Route path="/" element={<Home />}/>
-        <Route path="settings" element={<Settings handleSettings={handleSettings} user={user} currentLocation={location} />} />
-        <Route path="sessions/*" element={<Sessions regions={regions} user={user}/>} />
-        <Route path="*" element={<ErrorPage />} />
-      </Routes>
-      <Outlet />
-    </AppContainer>
+      <ThemeProvider theme={theme}>
+
+        <Header>
+          <h1><Link to="/" style={{ textDecoration: 'none' }}><FontAwesomeIcon style={{ marginRight: '15px', color: 'white' }} icon={faWater} />WAAVE</Link></h1>
+          <nav>
+            <Link to="/" style={{ textDecoration: 'none' }}>Home</Link> |{' '}
+            <Link to="/settings" style={{ textDecoration: 'none' }}>Settings</Link> |{' '}
+            <Link to="/sessions" style={{ textDecoration: 'none' }}>Sessions</Link>
+          </nav>
+        </Header>
+        <AppContainer>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="settings" element={<Settings handleSettings={handleSettings} user={user} currentLocation={location} />} />
+            <Route path="sessions/*" element={<Sessions regions={regions} user={user} />} />
+            <Route path="*" element={<ErrorPage />} />
+          </Routes>
+          <Outlet />
+        </AppContainer>
+      </ThemeProvider>
 
     </>
   )
