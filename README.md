@@ -11,6 +11,8 @@ It started as a 2-day sprint project for Hack Reactor.
 1. [Tech Stack](#tech-stack)
 1. [Product Features](#product-features)
     - [User Preferences](#user-preferences)
+    - [Sessions](#sessions)
+    - [Spots](#spots)
 1. [Getting Started](#getting-started)
     - [Installation](#installation)
 
