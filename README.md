@@ -15,6 +15,7 @@ It started as a 2-day sprint project for Hack Reactor.
     - [Spots](#spots)
 1. [Getting Started](#getting-started)
     - [Installation](#installation)
+1. [Contributors](#contributors)
 
 ## Tech Stack
 ### Front End
@@ -36,8 +37,8 @@ It started as a 2-day sprint project for Hack Reactor.
 ## Product Features
 ### User Preferences
 Users can set their name, email, location, and wave preferences.
-- Surf Location: This is currently limited to the US. The app will search surf spots within the state (e.g. California).
-- Wave Preference: The spots will be filtered based on the forecast wave height.
+- **Surf Location:** This is currently limited to the US. The app will search surf spots within the state (e.g. California).
+- **Wave Preference:** The spots will be filtered based on the forecast wave height.
 ### Sessions
 Users can plan a session up to 17 days in the future. They can select the morning vs. afternoon.
 ### Spots
@@ -52,19 +53,11 @@ From the root directory, run the following commands in your terminal:
 ```
   npm install
 ```
-or
-```
-  yarn install
-```
 
 #### 2. Start the development server.
 
 ```
   npm run server-dev
-```
-or
-```
-  yarn server-dev
 ```
 
 In the browser, open http://localhost:3000 or use another port as specified by your PORT environment variable.
@@ -74,9 +67,13 @@ In the browser, open http://localhost:3000 or use another port as specified by y
 ```
   npm run react-dev
 ```
-or
-```
-  yarn react-dev
-```
+## Contributors
+<a href="https://github.com/jojortz/waave/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=jojortz/waave" />
+</a>
+
+&nbsp;
+[<img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/linked-in-alt.svg" alt="joseromanortiz" height="30" width="40" />](https://linkedin.com/in/joseromanortiz)
+
 
 <p align="right"><a href="#top">Back to top &#8593;</a></p>
